@@ -25,29 +25,32 @@ import {
 export function Dashboard() {
   const data = [
     {
+      type: 'positive',
       title:'Desenvolvimento de Site',
       amount:'R$ 12.000,00',
       category:{
         name: 'Vendas',
-        icon: 'dollar',
+        icon: 'dollar-sign',
       },
       date:'13/04/2022'
     },
     {
+      type: 'negative',
       title:'Desenvolvimento de Site',
       amount:'R$ 12.000,00',
       category:{
         name: 'Vendas',
-        icon: 'dollar',
+        icon: 'shopping-bag',
       },
       date:'13/04/2022'
     },
     {
+      type: 'negative',
       title:'Desenvolvimento de Site',
       amount:'R$ 12.000,00',
       category:{
         name: 'Vendas',
-        icon: 'dollar',
+        icon: 'coffee',
       },
       date:'13/04/2022'
     },
