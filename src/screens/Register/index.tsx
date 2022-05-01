@@ -31,6 +31,7 @@ const schema = Yup.object().shape({
   amount: Yup.number()
     .typeError('Informe um valor numerico')
     .positive('O valor nao pode ser negativo')
+    .required('Preco e obrigatorio')
 });
 
 export function Register() {
@@ -52,6 +53,7 @@ export function Register() {
   });
 
   function handleTransactionTypeSelect (type: 'up'|'down') {
+    console.log('ola');
     setTransactionType(type);
   }
 
@@ -79,7 +81,6 @@ export function Register() {
 
     console.log(data);
   }
-
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
