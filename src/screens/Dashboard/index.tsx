@@ -27,17 +27,45 @@ export interface DataListProps extends TransactionCardProps {
   id: string;
 }
 
+interface HighlightProps {
+  total: string;
+}
+
+interface HighlightData {
+  entries: HighlightProps;
+  expensive: HighlightProps;
+  balanceTotal: string;
+}
+
 const dataKey = '@gofinances:transactions';
 
 export function Dashboard() {
-  const [data,setData] = useState<DataListProps[]>([]);
+  const [transactions,setTransactions] = useState<DataListProps[]>([]);
+  const [highlightData, setHighlightData] = useState<HighlightData>
+    ({
+      entries: {
+        total: '0'
+      },
+      expensive: {
+        total: '0'
+      },
+      balanceTotal: '0'
+    } as HighlightData);
+
+  let entrieTotal = 0;
+  let expensiveTotal = 0;
 
   async function loadTransactions () {
     const response = await AsyncStorage.getItem(dataKey);
-    const transactions = response ? JSON.parse(response) : [];
+    const transactionsStorage = response ? JSON.parse(response) : [];
 
-    const formatedTransactions: DataListProps[] = transactions.map(
+    const formatedTransactions: DataListProps[] = transactionsStorage.map(
       (item: DataListProps) => {
+        if(item.type === 'positive')
+          entrieTotal = Number(item.amount) + entrieTotal;
+        else
+          expensiveTotal = Number(item.amount) + expensiveTotal;
+
         const amount = Number(item.amount)
           .toLocaleString('pt-BR', {
             style: 'currency',
@@ -61,16 +89,34 @@ export function Dashboard() {
       }
     );
 
-    setData(formatedTransactions);
+    setTransactions(formatedTransactions);
+    setHighlightData({
+      expensive: {
+        total: expensiveTotal.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      },
+      entries: {
+        total: entrieTotal.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      },
+      balanceTotal: (entrieTotal - expensiveTotal).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+    });
   }
 
   useEffect(() => {
     loadTransactions();
   }, []);
 
-  useFocusEffect(useCallback(() => {
-    loadTransactions();
-  }, []));
+  // useFocusEffect(useCallback(() => {
+  //   loadTransactions();
+  // }, []));
 
   return (
     <Container>
@@ -94,19 +140,19 @@ export function Dashboard() {
         <HighlightCard 
           type='up'
           title='Entradas' 
-          amount='R$ 17.400,00' 
+          amount={highlightData.entries.total} 
           lastTransaction='Última entrada dia 13 de abril'
         />
         <HighlightCard
           type="down" 
           title='Saidas' 
-          amount='R$ 1.259,00' 
+          amount={highlightData.expensive.total}  
           lastTransaction='Última saída dia 03 de abril'
         />
         <HighlightCard
           type="total" 
           title='Total' 
-          amount='R$ 16.141,00' 
+          amount={highlightData.balanceTotal} 
           lastTransaction='01 à 16 de abril'
         />
       </HighlightCards>
@@ -115,7 +161,7 @@ export function Dashboard() {
         <Title>Listagem</Title>
 
         <TransactionsList 
-          data={data}
+          data={transactions}
           keyExtractor={item => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
         />
