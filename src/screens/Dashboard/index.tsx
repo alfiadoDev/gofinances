@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { HighlightCard } from '../../components/HighlightCard';
@@ -21,6 +21,7 @@ import {
   Title,
   TransactionsList,
 } from './styles';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
@@ -35,7 +36,7 @@ export function Dashboard() {
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
-    const formatedTransactions: TransactionCardProps = transactions.map(
+    const formatedTransactions: DataListProps[] = transactions.map(
       (item: DataListProps) => {
         const amount = Number(item.amount)
           .toLocaleString('pt-BR', {
@@ -66,6 +67,10 @@ export function Dashboard() {
   useEffect(() => {
     loadTransactions();
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    loadTransactions();
+  }, []));
 
   return (
     <Container>
