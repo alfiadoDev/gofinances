@@ -15,6 +15,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import { AppRoutes } from './src/routes/app.routes';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StatusBar } from 'react-native';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,6 +32,7 @@ export default function App() {
     <GestureHandlerRootView style={{flex: 1}}>
       <ThemeProvider theme={theme}>
         <NavigationContainer>
+          <StatusBar barStyle='light-content' />
           <AppRoutes />
         </NavigationContainer>
       </ThemeProvider>

@@ -136,15 +136,13 @@ export function Dashboard() {
       totalDate: total
     });
     setIsLoading(false);
+    entrieTotal = 0;
+    expensiveTotal = 0;
   }
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     loadTransactions();
-  }, []);
-
-  // useFocusEffect(useCallback(() => {
-  //   loadTransactions();
-  // }, []));
+  }, []));
 
   return (
     <Container>
