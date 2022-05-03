@@ -32,12 +32,14 @@ export interface DataListProps extends TransactionCardProps {
 
 interface HighlightProps {
   total: string;
+  lastTransaction: string;
 }
 
 interface HighlightData {
   entries: HighlightProps;
   expensive: HighlightProps;
   balanceTotal: string;
+  totalDate: string;
 }
 
 const dataKey = '@gofinances:transactions';
@@ -51,6 +53,26 @@ export function Dashboard() {
 
   let entrieTotal = 0;
   let expensiveTotal = 0;
+
+  function getLastTransactionDate(
+    collection: DataListProps[],
+    type: 'positive'|'negative'
+  ) {
+    const lastTransactions = 
+    new Date(
+    Math.max.apply(Math,
+      collection
+      .filter(
+        transaction => transaction.type === type
+      ).map(transaction => new Date(transaction.date).getTime())
+    ));
+    return `${lastTransactions.getDay()} de ${lastTransactions.toLocaleDateString(
+      'pt-BR',
+      {
+        month: 'long'
+      }
+    )}`;
+  }
 
   async function loadTransactions () {
     const response = await AsyncStorage.getItem(dataKey);
@@ -87,23 +109,31 @@ export function Dashboard() {
     );
 
     setTransactions(formatedTransactions);
+
+    const lastTransactionEntries = getLastTransactionDate(transactions, 'positive');
+    const lastTransactionExpensives = getLastTransactionDate(transactions, 'negative');
+    const total = `01 a ${lastTransactionExpensives}`
+
     setHighlightData({
       expensive: {
         total: expensiveTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+        lastTransaction: `Ultima Saida dia ${lastTransactionExpensives}`
       },
       entries: {
         total: entrieTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+        lastTransaction: `Ultima Entrada dia ${lastTransactionEntries}`
       },
       balanceTotal: (entrieTotal - expensiveTotal).toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+      totalDate: total
     });
     setIsLoading(false);
   }
@@ -148,19 +178,19 @@ export function Dashboard() {
               type='up'
               title='Entradas' 
               amount={highlightData.entries.total} 
-              lastTransaction='Última entrada dia 13 de abril'
+              lastTransaction={highlightData.entries.lastTransaction}
             />
             <HighlightCard
               type="down" 
               title='Saidas' 
               amount={highlightData.expensive.total}  
-              lastTransaction='Última saída dia 03 de abril'
+              lastTransaction={highlightData.expensive.lastTransaction}
             />
             <HighlightCard
               type="total" 
               title='Total' 
               amount={highlightData.balanceTotal} 
-              lastTransaction='01 à 16 de abril'
+              lastTransaction={highlightData.totalDate}
             />
           </HighlightCards>
 
