@@ -11,9 +11,14 @@ import {
   Header,
   Title,
   Content,
+  MonthSelect,
+  MonthSelectButton,
+  MonthSelectIcon,
+  Month,
   ChartContainer,
 } from './styles';
 import { categories } from "../../utils/categories";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -96,7 +101,25 @@ export function Resume () {
         <Title>Resumo por Categoria</Title>
       </Header>
 
-      <Content>
+      <Content
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingBottom: useBottomTabBarHeight(),
+        }}
+      >
+        <MonthSelect>
+          <MonthSelectButton>
+            <MonthSelectIcon name='chevron-left' />
+          </MonthSelectButton>
+
+          <Month>Maio</Month>
+          
+          <MonthSelectButton>
+            <MonthSelectIcon name='chevron-right' />
+          </MonthSelectButton>
+        </MonthSelect>
+
         <ChartContainer>
           <VictoryPie 
             data={totalByCategories}
