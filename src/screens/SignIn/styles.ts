@@ -26,7 +26,7 @@ export const Title = styled.Text`
 
   text-align: center;
 
-  margin-top: 45px;
+  margin-top: 40px;
 `;
 
 export const SignInTitle = styled.Text`
@@ -45,4 +45,10 @@ export const Footer = styled.View`
   height: 30%;
 
   background-color: ${({ theme }) => theme.colors.secondary};
+`;
+
+export const FooterWrapper = styled.View`
+  margin-top: ${RFValue(-25)}px;
+  padding: 0 32px;
+  justify-content: space-between;
 `;
