@@ -57,19 +57,44 @@ export function Dashboard() {
   let entrieTotal = 0;
   let expensiveTotal = 0;
 
-  function getLastTransactionDate(
+  function getLastTransactionDateByType(
     collection: DataListProps[],
-    type: 'positive'|'negative'
+    type: 'positive'|'negative',
   ) {
+    const collectionFilttered = collection
+    .filter(
+      transaction => transaction.type === type
+    );
+    
+    if(collectionFilttered.length === 0)
+      return 0;
+
     const lastTransactions = 
     new Date(
     Math.max.apply(Math,
-      collection
-      .filter(
-        transaction => transaction.type === type
-      ).map(transaction => new Date(transaction.date).getTime())
+      collectionFilttered
+      .map(transaction => new Date(transaction.date).getTime())
     ));
-    return `${lastTransactions.getDay()} de ${lastTransactions.toLocaleDateString(
+    return `${lastTransactions.getDate()} de ${lastTransactions.toLocaleDateString(
+      'pt-BR',
+      {
+        month: 'long'
+      }
+    )}`;
+  }
+
+  function getLastTransactionDate(
+    collection: DataListProps[],
+  ) {
+    
+    if(collection.length === 0)
+      return 0;
+
+    const transaction = collection[0];
+
+    const lastTransaction = new Date(transaction.date);
+
+    return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleDateString(
       'pt-BR',
       {
         month: 'long'
@@ -113,24 +138,26 @@ export function Dashboard() {
 
     setTransactions(formatedTransactions);
 
-    const lastTransactionEntries = getLastTransactionDate(transactions, 'positive');
-    const lastTransactionExpensives = getLastTransactionDate(transactions, 'negative');
-    const total = `01 a ${lastTransactionExpensives}`
-
+    const lastTransactionEntries = getLastTransactionDateByType(transactions, 'positive');
+    const lastTransactionExpensives = getLastTransactionDateByType(transactions, 'negative');
+    const lastTransactionTotal = getLastTransactionDate(transactions);
+    const total = lastTransactionTotal === 0 ? 'Nao ha Transacoes' : `01 a ${lastTransactionTotal}`
     setHighlightData({
       expensive: {
         total: expensiveTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Ultima Saida dia ${lastTransactionExpensives}`
+        lastTransaction: lastTransactionExpensives === 0 ? 'Nao ha Transacoes' :
+        `Ultima Saida dia ${lastTransactionExpensives}`
       },
       entries: {
         total: entrieTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Ultima Entrada dia ${lastTransactionEntries}`
+        lastTransaction: lastTransactionEntries === 0 ? 'Nao ha Transacoes' : 
+        `Ultima Entrada dia ${lastTransactionEntries}`
       },
       balanceTotal: (entrieTotal - expensiveTotal).toLocaleString('pt-BR', {
           style: 'currency',
