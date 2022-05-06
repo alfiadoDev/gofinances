@@ -43,7 +43,6 @@ interface HighlightData {
   totalDate: string;
 }
 
-const dataKey = '@gofinances:transactions';
 
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +51,8 @@ export function Dashboard() {
 
   const theme = useTheme();
   const { user, signOut } = useAuth();
+
+  const dataKey = `@gofinances:transactions_user:${user.id}`;
 
   let entrieTotal = 0;
   let expensiveTotal = 0;

@@ -24,6 +24,7 @@ import { categories } from "../../utils/categories";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "../../hooks/auth";
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -42,7 +43,6 @@ interface CategoryData {
   percent: string;
 }
 
-const dataKey = '@gofinances:transactions';
 
 export function Resume () {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +50,9 @@ export function Resume () {
   const [totalByCategories, steTotalByCategories] = useState<CategoryData[]>([]);
 
   const theme = useTheme();
+  const { user } = useAuth();
+
+  const dataKey = `@gofinances:transactions_user:${user.id}`;
 
   function handleDateChange (action: 'next'|'prev') {
     if(action === 'next') {
