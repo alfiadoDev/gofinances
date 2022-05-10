@@ -65,7 +65,6 @@ export function Dashboard() {
     .filter(
       transaction => transaction.type === type
     );
-    
     if(collectionFilttered.length === 0)
       return 0;
 
